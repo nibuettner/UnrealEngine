@@ -1,0 +1,86 @@
+Unreal general
+------------------------------------
+Event
+  something that occurs at some point
+  there are built-in events (like tick) but also custom events
+  an event in the event graph is like the begin marker of a function
+  everything that is connected to the event will be executed when the event is executed
+
+Run on owning client
+- will not run on server
+- can be called from server (?)
+- Widgets can only run on owning client
+- Run anything UI-related on the owning client
+
+Calling things somewhere
+- Looks like you can actually update clients by going through player controllers on the server and calling events there
+
+
+Unreal networking
+------------------------------------
+https://www.unrealengine.com/en-US/blog/blueprint-networking-tutorials
+
+General tips
+------------
+- Do checks on client AND server. Because when you check on the client and the client comes to the conclusion that thje action is not possible than he does not need to send the event to the server.
+  However, to prevent cheating, we also want to check again on the server.
+- Use "Replicates -> Run on Server" in replicated events when the client asks the server to do something (spawn bomb or sth.).
+  Anything in this event will NOT be run on a client (as opposed to a multicast event)
+- No need to replicate variables that the client will never fiddle with (an example might be the fuse time of a bomb. You will never want the client to be able to do anything with the fuse time)
+- "Authotity guard" (use "Switch Authority" node) for all functions because someone might try to call it on a client and succeed
+
+Actor replication -> just tick "Replicate" in Actor Class Defaults
+
+Variable replication -> select "Replication" in variable details in the Actor screen
+-> used when something needs to be tracked across the network (like player health)
+-> is reliable, which means we can expect the value to be correctly replicated to all clients
+RepNotify
+-> Replication but when variable changes, let me call something
+-> creates new function in blueprint "OnRep_<varname>" that is called when the variable value changes
+-> the function will be called on the server and on the clients
+-> in the example it sets a material parameter value
+Don't run VFX or HUD on server (tbc)
+
+Function replication
+-> used when something happens once (like an explosion or a buttton press)
+-> call functions only on a server
+-> custom event is marked as "Replicates" with different options
+   -> Not Replicated
+      ...
+   -> Multicast
+      When the server calls the function (server event calls custom event), the event is executed on the server
+	  The server then tells all the clients to also execute the function (probably at the same time the server starts the function)
+   -> Run on Server
+   -> Run on owning Client
+-> Reliable can be set to true or false
+   -> optimization: it might be that the function will not get through to all clients; this is ok for stuff that is purely
+                    cosmetical or really not gameplay relevant
+
+Network Relevancy
+-----------------
+
+Is an Actor relevant to a particular client?
+If they are, send network updates.
+If they are not, we do not want to send update packages about this actor to the client.
+
+Problem: What if something changed on the actor we didn't receive updates for?
+Example is, a chest has been opened while the client out of relevancy range. So the fact that the chest is open is not known to the client when it gets back into relevancy range. That means that server and client get out of sync (chest open on server but still closed on client)
+
+RepNotify function function will be executed when will be executed when the actor gets relevant again
+-> Have the actual event in the Event graph (Multicast function) only do the stuff that is directly connected to the process of opening the chest (play animation/FX)
+   -> all clients with network relevancy will see the opening process, but not the ones without relevancy
+   -> Use variable replication to store the state so that when clients come back into relevancy range are notified of the variable state
+-> Have the RepNotify function only execute the part that is relevant for when clients enter relevancy range
+   -> function does not play animation or FX, it just sets the box open (mesh)
+
+Question: How do we set up network relevancy?
+
+
+BP nodes
+--------
+Switch Has Authority
+  - checks if current exe has authority
+    -> basically if it is server, but there ma be times when the server has no authority
+	-> example may be HUD -> client has authority over its HUD
+  - so -> do something on the server vs the client
+  - in a network scenario, most code should be executed on the server and replicated to the clients

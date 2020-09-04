@@ -1,0 +1,29 @@
+General notes
+------------------------------------
+
+Interfaces
+----------
+- Define functions that are to be implemented
+- Can be used to store a reference to Objects that implement it
+  -> create a function that returns the sub class
+  -> circumvents casting which is slow
+- You cannot define in Interfaces where they run (server, client, multicast)
+  -> you can define that in the classes that implement the interface
+
+Main Game Logic
+---------------
+
+Game Instance: Main Game Instance that is accessible from everywhere
+Game Mode: subdivision of Game Instance -> examples: Main Menu, Lobby, Gamplay
+-> Only runs on server
+Player Controller: Actual Player that is playing (and/or connected to a server)
+-> exists on client AND server
+
+Variables
+---------
+- Property "Expose on Spawn": When true, nodes that spawn the class will expose this variable as a pin
+  Example: When you create a widget on the client, you might want to add some info from the game instance
+
+Functions
+---------
+- Is Server: Returns whether the world the object is in is the host or not

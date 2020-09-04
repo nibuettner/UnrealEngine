@@ -1,0 +1,79 @@
+Animation workflow Mixamo
+-------------------------------------------------------------------------------
+- requires download of Mixamo converter for Blender 2.8 from https://github.com/enziop/mixamo_converter/tree/blender28
+  Note that for Blender 2.8 we need to switch to the 2.8 branch
+- download single Animation including skin from Mixamo.com
+  Packs don't work because they won't include Mesh
+  May upload and auto rig own mesh before
+  WHEN DOWNLOADING SELECT "In Place"
+- Put donwloaded fbx file in input folder
+- Open Blender (Mixamo converter Add-On needs to be activated) and Batch export from input folder
+- Copy one converted fbx file into Unreal Engine
+  We need one mesh from one of the fbx files to be able to retarget to it afterwards
+- Import the file with mesh and skeleton
+- Rename mesh and skeleton
+
+- Download more anims from mixamo.com (1 by one, no packs)
+- Copy fbx files into input folder
+- Convert using Blender and mixamo batch convert
+
+- Create a completely new project every time you import fbx files into Blender
+- Import every file into Blender, delete Cam, Light, "End" bones and mesh
+- Export to final FBX folder using UE4 export settings
+- Import into UE
+- Edit Animation -> apply preview mesh to asset (right-hand side)
+
+-> Animations should be working now; continue with blend spaces
+
+Animation workflow Mr Manneqion Tools (Blender Add-In)
+-------------------------------------------------------------------------------
+https://gumroad.com/l/MrMannequinsTools
+
+- Use Mr Mannequin Tools to import Rig and Model (if needed) into Blender
+- Build your model to fit all the bones
+- create vertex groups as in the Mannequin model
+- Parent the Rig to the model (Ctrl+P - Empty groups)
+- Select model and Rig and use Mr Mannequin Tools to Export to fbx
+- import fbx into UE
+  -> IMPORTANT: when importing, select the default UE Mannequin Skeleton, DON'T import it from the fbx
+- Copy Mannequin animations (don't retarget, just copy), open them and change the mesh to your imported mesh
+- build blend spaces, etc.
+
+Vertex groups overview
+-----------------------------------
+pelvis                 | 
+spine_01               | belly
+spine_02               | ribcage
+spine_03               | upper body (most of ribcage)
+neck_01                | 
+head                   | 
+clavicle_l             | shoulder extended
+upperarm_l             | upper arm without shoulder joint
+upperarm_twist_01_l    | full upper arm including shoulder joint
+lowerarm_l             | full lower arm including elbow joint)
+lowerarm_twist_01_l    | lower arm without elbow joint
+hand_l                 | hand including wrist joint (excluding fingers and thumb)
+index_01_l             | 
+index_02_l             | 
+index_03_l             | 
+middle_01_l            | 
+middle_02_l            | 
+middle_03_l            | 
+pinky_01_l             | 
+pinky_02_l             | 
+pinky_03_l             | 
+ring_01_l              | 
+ring_02_l              | 
+ring_03_l              | 
+thumb_01_l             | 
+thumb_02_l             | 
+thumb_03_l             | 
+thigh_l                | upper leg without pelvis joint
+thigh_twist_01_l       | full upper leg including pelvis joint
+calf_l                 | full lower leg including knee joint
+calf_twist_01_l        | lower leg without knee joint
+foot_l                 | foot including ankle joint
+ball_l                 | toes+
+
+
+
