@@ -1,0 +1,18 @@
+Game Instance
+- Main Game Instance that is accessible from everywhere
+- not replicated
+- one instance on every server/client
+
+Game Mode
+- subdivision of Game Instance
+- only runs on server
+
+Player Controller
+- Actual Player that is playing (and/or connected to a server)
+- Each Player Controller exists on server and client
+- Server functions that are called on a server player controller need to call
+  client functions on the client player controller. Otherwise the client player
+  controller is not updated.
+- Do not call server functions from a client player controller. I think this
+  leads to unpredictable behavior
+  

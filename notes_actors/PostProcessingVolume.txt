@@ -1,0 +1,1 @@
+Infinite Extent option: Sets this PostProcessingVolume to be active everywhere on the map

@@ -1,6 +1,22 @@
 General notes
 ------------------------------------
 
+Editor Interface
+----------------
+- W: translate
+- E: rotate
+- R: scale
+- Alt + grab arrow: duplicate object
+- RMB + movement keys + Mouse Wheel: change movement speed
+- You can drag level Actors into the level blueprint
+
+Engine Features
+---------------
+- Override functions:
+  in every blueprint, you cannot only create functions but also override existing ones.
+  Example: CanJump can be overwritten to allow for double jumps because the standard implementation
+           checks if the character is in the air
+
 Interfaces
 ----------
 - Define functions that are to be implemented
@@ -10,15 +26,6 @@ Interfaces
 - You cannot define in Interfaces where they run (server, client, multicast)
   -> you can define that in the classes that implement the interface
 
-Main Game Logic
----------------
-
-Game Instance: Main Game Instance that is accessible from everywhere
-Game Mode: subdivision of Game Instance -> examples: Main Menu, Lobby, Gamplay
--> Only runs on server
-Player Controller: Actual Player that is playing (and/or connected to a server)
--> exists on client AND server
-
 Variables
 ---------
 - Property "Expose on Spawn": When true, nodes that spawn the class will expose this variable as a pin
@@ -27,3 +34,9 @@ Variables
 Functions
 ---------
 - Is Server: Returns whether the world the object is in is the host or not
+
+Animations
+----------
+- Animation Blueprints have an
+  - Animation Event Graph: Logic of setting variables used in the Animation Graph
+  - Animation Graph: Actual Graph of how animations flow into each other
