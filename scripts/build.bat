@@ -11,7 +11,7 @@ SET UE4_DIR=<PATH\TO\COMPILED\UE4>
 SET UAT_CMD=%UE4_DIR%\Engine\Build\BatchFiles\RunUAT.bat
 SET UAT_GEN_CMD=%UE4_DIR%\Engine\Binaries\Win64\UnrealVersionSelector-Win64-Shipping.exe
 
-SET 7Z_CMD=<PATH\TO\7-ZIP\EXE>
+SET ZIP_CMD=<PATH\TO\ZIP\EXE>
 
 rmdir /Q /S %COMPILE_DIR%
 mkdir %COMPILE_DIR%
@@ -29,9 +29,23 @@ xcopy %PROJECT_DIR%\Content %COMPILE_DIR%\Content /E /H /C /I
 
 %UAT_GEN_CMD% /projectfiles %COMPILE_DIR%\RIG.uproject
 
-%UAT_CMD% BuildCookRun -project="%UPROJECT_FILE_COMP%" -noP4 -clientconfig=Development -platform=Win64 -targetplatform=Win64 -server -serverconfig=Development -serverplatform=Linux -maps=DM-Dunno+Intro+MainMenu -noclient -build -cook -compile -stage -stagingdirectory="%BUILD_DIR%\%BUILD_NAME%" -pak -cmdline=" -Messaging" > buildcookrun.log
+echo Build Windows
+call %UAT_CMD% -ScriptsForProject=%UPROJECT_FILE_COMP% BuildCookRun -project=%UPROJECT_FILE_COMP% -noP4 -clientconfig=Development -serverconfig=Development -utf8output -platform=Win64 -build -cook -map=DM-Dunno+Intro+MainMenu -unversionedcookedcontent -compressed -stage -package -stagingdirectory=%BUILD_DIR%\%BUILD_NAME% -cmdline=" -Messaging" -compile > build_windows.log
 
-%7Z_CMD% a %BUILD_DIR%\LinuxServer\LinuxServer.zip %BUILD_DIR%\LinuxServer\*
+echo Build LinxServer
+call %UAT_CMD% -ScriptsForProject=%UPROJECT_FILE_COMP% BuildCookRun -project=%UPROJECT_FILE_COMP% -noP4 -clientconfig=Development -serverconfig=Development -utf8output -server -serverplatform=Linux -noclient -build -cook -map=DM-Dunno+Intro+MainMenu -unversionedcookedcontent -compressed -stage -package -stagingdirectory=%BUILD_DIR%\%BUILD_NAME% -cmdline=" -Messaging" -compile  > build_linux_server.log
+
+echo ZIP Server Build Files
+%ZIP_CMD% %BUILD_DIR%\%BUILD_NAME%\LinuxServer\LinuxServer.zip %BUILD_DIR%\%BUILD_NAME%\LinuxServer\*
+
+echo Upload to Server
+rem WIP
+
+echo Extract on Server
+rem WIP
+
+echo Run on Server
+rem WIP
 
 pause
 
