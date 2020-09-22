@@ -6,7 +6,9 @@ SET PROJECT_DIR=<PATH\TO\PROJECT>
 SET COMPILE_DIR=<NEW\PATH\TO\PROJECT_COMPILED>
 SET UPROJECT_FILE=%PROJECT_DIR%\<UPROJECT FILE NAME>.uproject
 SET UPROJECT_FILE_COMP=%COMPILE_DIR%\<UPROJECT FILE NAME>.uproject
-SET BUILD_DIR=%COMPILE_DIR%\Build
+
+rem !!! DON'T put BUILD_DIR below COMPILE_DIR (it will be deleted in the end) !!!
+SET BUILD_DIR=%PROJECT_DIR%\Build
 SET BUILD_NAME=<BUILD NAME>
 
 SET UE4_DIR=<PATH\TO\COMPILED\UE4>
@@ -32,13 +34,14 @@ SET PSCP_CMD=<LOCAL\PATH\TO\pscp.exe>
 
 rem ### Preparations ###########################################################
 
-rmdir /Q /S %COMPILE_DIR%
+if exist %COMPILE_DIR%\ rmdir /Q /S %COMPILE_DIR%
+if exist %BUILD_DIR%\%BUILD_NAME%\ rmdir /Q /S %BUILD_DIR%\%BUILD_NAME%
 mkdir %COMPILE_DIR%
 mkdir %COMPILE_DIR%\Source
 mkdir %COMPILE_DIR%\Plugins
 mkdir %COMPILE_DIR%\Config
 mkdir %COMPILE_DIR%\Content
-mkdir %BUILD_DIR%
+if not exist %BUILD_DIR%\ mkdir %BUILD_DIR%
 
 echo Create a copy of the project so that I can continue developing
 echo ---------------------------------------------------------------------------
@@ -49,7 +52,9 @@ xcopy %PROJECT_DIR%\Config %COMPILE_DIR%\Config /E /H /C /I
 xcopy %PROJECT_DIR%\Content %COMPILE_DIR%\Content /E /H /C /I
 
 rem # Generate project files
-%UAT_GEN_CMD% /projectfiles %COMPILE_DIR%\RIG.uproject
+%UAT_GEN_CMD% /projectfiles %UPROJECT_FILE_COMP%
+
+timeout /T 2
 
 rem ### Builds #################################################################
 
@@ -57,13 +62,19 @@ rem # empty log file
 break > %PROJECT_DIR%\build_windows.log
 start powershell Get-Content %PROJECT_DIR%\build_windows.log -Wait
 
+timeout /T 2
+
 echo Build Windows
 echo ---------------------------------------------------------------------------
 call %UAT_CMD% -ScriptsForProject=%UPROJECT_FILE_COMP% BuildCookRun -project=%UPROJECT_FILE_COMP% -noP4 -clientconfig=Development -serverconfig=Development -utf8output -platform=Win64 -build -cook -map=DM-Dunno+Intro+MainMenu -unversionedcookedcontent -compressed -stage -package -stagingdirectory=%BUILD_DIR%\%BUILD_NAME% -cmdline=" -Messaging" -compile > %PROJECT_DIR%\build_windows.log
 
+timeout /T 2
+
 rem # empty log file
 break > %PROJECT_DIR%\build_linux_server.log
 start powershell Get-Content %PROJECT_DIR%\build_linux_server.log -Wait
+
+timeout /T 2
 
 echo Build LinxServer
 echo ---------------------------------------------------------------------------
@@ -128,5 +139,14 @@ echo ---------------------------------------------------------------------------
 echo %PLINK_CMD% -batch -l %REMOTE_USER% -i %PRIVATE_KEYFILE% %REMOTE_MACHINE% "%SRV_REMOTE_UPLD_PATH%/%SRV_REMOTE_RIGSRV_CMD% > /dev/null &"
 %PLINK_CMD% -batch -l %REMOTE_USER% -i %PRIVATE_KEYFILE% %REMOTE_MACHINE% "%SRV_REMOTE_UPLD_PATH%/%SRV_REMOTE_RIGSRV_CMD% > /dev/null &"
 
+echo Delete compile directory
+echo ---------------------------------------------------------------------------
+rmdir /Q /S %COMPILE_DIR%
+
 rem shutdown -s -t 600
+
+echo ---------------------------------------------------------------------------
+echo DONE!
+echo ---------------------------------------------------------------------------
+
 pause
