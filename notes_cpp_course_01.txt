@@ -1,0 +1,44 @@
+Pointers
+
+  void manipulate(int* pValue) {
+    *pValue = 100; // dereferences the pointer *pValue and sets the value at its address to 100
+  }
+
+  int main() {
+    int value = 10;
+    int* pValue = &value; // pValue is set to the address of value
+      // "cout << pValue << endl;" is the same as "cout << &value << endl;"
+    manipulate(&value); // or manipulate(pValue); Sets the value at address of value to 100
+  }
+
+Actors are the central replicated objects used in UE
+
+Virtual functions can be overridden
+
+Logging (https://www.ue4community.wiki/logging-lgpidy6i)
+- To Log: UE_LOG(LogTemp, Warning, TEXT("Direction: (%f, %f, %f)"), Direction.X, Direction.Y, Direction.Z);
+- To Game Screen:
+  UEngine* Engine = GetEngine();
+  if(!ensure(Engine != nullptr)) return;
+  Engine->AddOnScreenDebugMessage(0, 5.f, FColor::White, TEXT("This message will appear on the screen!"));
+
+Doing stuff in constructors ...
+... may not have an effect in the current editor because the constructor may have already been called.
+
+UFUNCTION(Exec)
+- console commands
+- available in GameInstance, GHameMode, PlayerController, Possessed Pawn, HUDs, Cheat Managers
+
+ServerTravel
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+  
+Accessing UUserWidgets requires "UMG" to be included in /Source/RIG/RIG.build.cs:
+  PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
+  Restart VS afterwards and Regenerate VS files for project
+  Or Else:
+  1>RIGGameInstance.cpp.obj : error LNK2019: unresolved external symbol "__declspec(dllimport) private: static class UClass * __cdecl UUserWidget::GetPrivateStaticClass(void)" (__imp_?GetPrivateStaticClass@UUserWidget@@CAPEAVUClass@@XZ) referenced in function "public: virtual void __cdecl ConstructorHelpers::FClassFinder<class UUserWidget>::AddReferencedObjects(class FReferenceCollector &)" (?AddReferencedObjects@?$FClassFinder@VUUserWidget@@@ConstructorHelpers@@UEAAXAEAVFReferenceCollector@@@Z)
+  1>    Hint on symbols that are defined and could potentially match:
+  1>      "__declspec(dllimport) private: static class UClass * __cdecl UBoxComponent::GetPrivateStaticClass(void)" (__imp_?GetPrivateStaticClass@UBoxComponent@@CAPEAVUClass@@XZ)
+  1>D:\Projects\RIG\Binaries\Win64\UE4Editor-RIG-0001.dll : fatal error LNK1120: 1 unresolved externals

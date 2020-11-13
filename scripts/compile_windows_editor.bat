@@ -4,10 +4,11 @@ rem ### Variables ##############################################################
 
 SET PROJECT_DIR=<PATH\TO\PROJECT>
 SET UPROJECT_FILE=%PROJECT_DIR%\<UPROJECT FILE NAME>.uproject
+
 SET UE4_DIR=<PATH\TO\COMPILED\UE4>
 SET UAT_CMD=%UE4_DIR%\Engine\Build\BatchFiles\Build.bat
 SET UAT_GEN_CMD=%UE4_DIR%\Engine\Binaries\Win64\UnrealVersionSelector-Win64-Shipping.exe
-SET PROJECT_NM=<PROJECT_NAME>
+SET PROJECT_NM=<PROJEcT NAME>
 
 rem # Generate project files
 %UAT_GEN_CMD% /projectfiles %UPROJECT_FILE%

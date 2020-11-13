@@ -1,6 +1,32 @@
 General notes
 ------------------------------------
 
+Gameplay Framework
+------------------
+
+https://docs.unrealengine.com/en-US/Gameplay/Framework/QuickReference/index.html
+https://docs.unrealengine.com/en-US/Gameplay/Framework/GameMode/index.html
+
+GameMode (not GameModeBase) MatchStates
+- GameMode.Construction
+- GameMode.EnteringMap: directly after construction
+- GameState.Construction
+- PlayerController.Construction
+- PlayerState.Construction
+- GameMode.OnPostLogin: Player logged in (host specifically)
+- GameMode.WaitingToStart: Actors are ticking, but players have not yet spawned in (unless we did it in OnPostLogin. :))
+  -> overrideable ReadyToStartMatch function or call StartMatch
+- GameMode.BeginPlay
+- GameState.BeginPlay
+- PlayerController.BeginPlay
+- PlayerState.BeginPlay
+- GameMode.InProgress: Calls BeginPlay on all Actors
+  -> overrideable ReadyToEndMatch function or call EndMatch
+- GameMode.WaitingPostMatch: Actors are still ticking, but new players cannot join
+  -> map transfer
+- GameMode.LeavingMap: Match stays in this state while transferring to a new map
+  
+
 Editor Interface
 ----------------
 - W: translate

@@ -1,0 +1,29 @@
+use scripts located at https://github.com/nibuettner/Blender
+
+need two models, one for creating the Rigify animations (this one is a child
+of the Rigify armature) and one copy for the result animation based on the
+simplified model
+
+simplify_rigify_armature.py
+--------------------------------------------------------------------------------
+- copy to blender project - Scripting
+- select Rigify armature
+- run script
+- new armature called "root"
+- parent the copy of the model to the simplified armature
+
+generate_animations.py
+--------------------------------------------------------------------------------
+- copy to blender project - Scripting
+- select Rigify armature first, then simplified armature
+- run script
+- existing animations (actions) will be applied to new simplified model
+- currently manual step: create NLA tracks from the actions so that they are
+  properly imported in UE
+- select simplified armature and attached model and export to fbx
+  -> selected objects, Armature and Mesh,
+     Geometry Smoothing: Face, Apply Modifiers
+     Armature FBXNode Type Root (, optional: Only Deform Bones)
+     Bake Animation: Key All Bones, NLA Strips, Force Start/End Keying
+      Sampling Rate 1.0, Simplify 1.0 (?)
+- Import into UE
